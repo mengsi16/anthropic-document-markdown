@@ -20,10 +20,12 @@
 4. ✅ **长时间运行代理框架**
 5. ✅ **Claude Code完整指南**
 6. ✅ **Skills开发实战手册**
+7. ✅ **Anthropic API传输协议**
+8. ✅ **Claude Code传输架构**
 
 ---
 
-## 📖 文档列表（共11篇）
+## 📖 文档列表（共13篇）
 
 ---
 
@@ -277,6 +279,70 @@
 
 ---
 
+---
+
+### 📡 第五部分：传输协议与架构（2篇）
+
+#### 12. Anthropic API 传输协议（Messages API / SSE流式传输）
+- **文件**: `12-anthropic-api-transportation-protocol.md` | 大小: ~38 KB
+- **来源**: 
+  - [Anthropic API Overview](https://platform.claude.com/docs/en/api/overview)
+  - [Build with Claude: Streaming](https://platform.claude.com/docs/en/build-with-claude/streaming)
+  - [API Errors](https://platform.claude.com/docs/en/api/errors)
+- **核心内容**:
+  - **HTTP 规范**: REST 端点 `/v1/messages`，请求头（`x-api-key`, `anthropic-version`, `content-type`），认证方式
+  - **多平台认证**: API Key 直连 / AWS Bedrock / Google Vertex AI / Azure 三方平台集成
+  - **请求体完整 schema**: `model` / `messages` (role+content) / `max_tokens`(必填) / `system` / `temperature` / `top_p` / `top_k` / `stop_sequences` / `stream` / `tools` / `tool_choice` / `thinking`
+  - **响应格式**: 完整 JSON 响应 vs SSE 流式响应对比
+  - **SSE 流式协议**: 
+    - 事件生命周期：`message_start` → `content_block_start/delta/stop` → `message_delta/stop`
+    - 8种内容块类型：text / image / tool_use / tool_result / thinking / redacted_thinking / signature / input_json
+    - 4种 delta 事件：text_delta / input_json_delta / thinking_delta / signature_delta
+    - Mermaid 流程图可视化完整生命周期
+  - **错误处理体系**:
+    - 认证错误 (401) / 权限错误 (403) / 未找到 (404) / 请求过大 (413)
+    - 速率限制 (429)：Token Bucket 算法 + Retry-After 头
+    - 服务端错误 (5xx) + API 错误 (521-599)
+    - 错误响应 JSON 结构 (`type` + `error` 对象)
+  - **SDK 集成**: Python / TypeScript SDK 使用示例
+- **适用读者**: 需要直接调用 Anthropic API 的开发者、理解底层传输机制的系统工程师
+- **关键要点**: `max_tokens` 是唯一必填字段；SSE 流式通过 `stream:true` 启用；速率限制遵循 Token Bucket 模型
+
+---
+
+#### 13. Claude Code 传输架构深度解析
+- **文件**: `13-claude-code-transportation-architecture.md` | 大小: ~52 KB ⭐ 最深入
+- **来源**:
+  - [How Claude Code Works](https://code.claude.com/docs/how-claude-code-works)
+  - [Claude Code Overview](https://code.claude.com/docs/overview)
+  - [Model Context Protocol Specification](https://modelcontextprotocol.io/specification)
+- **核心内容**:
+  - **Agentic Loop 3阶段模型**: Gather Context → Take Action → Verify Results（Mermaid流程图）
+  - **统一核心引擎**: Terminal CLI / VS Code / Desktop / Web / JetBrains 共享同一 agentic loop
+  - **API 通信层**: 
+    - Messages API 调用链路（用户输入 → System Prompt 组装 → API 请求 → SSE 解析 → 输出渲染）
+    - 多模型策略：Sonnet(日常) / Opus(复杂决策) 自动切换逻辑
+  - **MCP 传输层**:
+    - stdio 模式：子进程 stdin/stdout JSON-RPC 通信
+    - Streamable HTTP 模式：远程服务器 + SSE 长连接
+    - Session 管理：initialize → initialized → 生命周期通知
+  - **工具调用协议**:
+    - 6大类别：File / Search / Execution / Web / Code Intelligence / Orchestration
+    - 6步生命周期：Tool selection → Permission check → Execution → Result parsing → Context update → Next action
+    - 4种权限模式：Default / Auto-edit / Plan / Auto
+  - **上下文窗口管理**:
+    - 6个组成组件：System Prompt / CLAUDE.md / Conversation History / Dynamic Content / Auto Memory / Skills
+    - 压缩策略：自动清理旧输出 → 必要时摘要压缩 → Compaction
+    - Token 预算分配与优化技巧
+  - **多环境部署对比**: Local / Cloud VM / Remote Control 的网络拓扑、数据流向、安全性差异（Mermaid架构图）
+  - **安全机制**: Checkpoint 快照系统 + Permissions 四层权限控制 + Sandbox 隔离
+  - **扩展系统**: Skills / Subagents / Plugins / Hooks 与传输层的集成点
+  - **24个 Mermaid 图表**: 覆盖架构图、时序图、流程图、甘特图等多种可视化形式
+- **适用读者**: 需要深入理解 Claude Code 内部通信机制的进阶开发者、构建类似系统的架构师
+- **关键要点**: 所有界面共享同一核心引擎；MCP 双传输模式(stdio/HTTP)；上下文窗口是最稀缺资源需精心管理
+
+---
+
 ## 🔗 相关资源链接
 
 ### 官方文档源
@@ -289,6 +355,10 @@
 - [Claude Developer Platform](https://platform.claude.com)
 - [Claude Documentation](https://docs.anthropic.com)
 - [Model Context Protocol (MCP)](https://modelcontextprotocol.io)
+
+### 传输协议与架构源
+- [Anthropic API Overview](https://platform.claude.com/docs/en/api/overview)
+- [Build with Claude: Streaming](https://platform.claude.com/docs/en/build-with-claude/streaming)
 
 ---
 
@@ -308,8 +378,14 @@
 - **08-Skills-Complete-Guide**: 开发自定义技能（最强实操）
 - **10-Agent-Teams**: 多实例并行协调（实验性功能）
 - **11-Plugins**: 打包分发扩展给团队
+- **12-API-Transportation-Protocol**: Anthropic Messages API 与 SSE 流式传输底层协议
+- **13-Claude-Code-Transportation-Architecture**: Claude Code 完整传输架构与 MCP 协议集成
 - 评估路线图（文档03的第7-8步）
 - 多代理架构讨论（文档02和04的未来工作部分）
+
+### 底层协议与架构（系统工程师/架构师）
+1. **12-Anthropic-API-Transportation-Protocol** → 理解 HTTP API / SSE 流式 / 认证 / 错误处理 / 速率限制
+2. **13-Claude-Code-Transportation-Architecture** → 深入 Agentic Loop / MCP 双模式 / 工具调用协议 / 上下文管理 / 安全机制
 
 ---
 
@@ -333,7 +409,9 @@
 | **pass^k** | 所有k次试验都成功的概率 | 文档03 |
 | **Harness** | 使模型能够充当代理的系统框架 | 文档03, 04 |
 | **ACI** | Agent-Computer Interface（代理-计算机接口）| 文档01 |
-| **MCP** | Model Context Protocol，工具集成标准 | 文档05, 09, 11 |
+| **MCP** | Model Context Protocol，工具集成标准（stdio/Streamable HTTP 双模式）| 文档05, 09, 11, 13 |
+| **SSE** | Server-Sent Events，服务端推送流式传输协议 | 文档12, 13 |
+| **Agentic Loop** | Claude Code 的 Gather→Act→Verify 三阶段循环 | 文档07, 13 |
 | **Hook** | 工具使用前后的生命周期事件处理器 | 文档06, 09, 11 |
 
 ---
@@ -341,8 +419,9 @@
 ## 📊 技术栈关联
 
 ### 与Claude平台的集成
-- **Claude Code**: 使用文档04中的harness模式
-- **MCP (Model Context Protocol)**: 文档01和02中提到的工具集成标准
+- **Claude Code**: 使用文档04中的harness模式，文档13详解其传输架构
+- **MCP (Model Context Protocol)**: 文档01和02中提到的工具集成标准，文档13详解双传输模式
+- **Messages API**: 文档12完整覆盖 HTTP 规范 / SSE 流式 / 认证 / 错误处理
 - **Agent SDK**: 文档04的核心框架
 - **Memory Tool**: 文档02提到的Sonnet 4.5新功能
 
@@ -371,4 +450,4 @@
 ---
 
 **最后更新**: 2026年4月8日
-**版本**: v1.1（新增 Subagents / Agent Teams / Plugins 三篇多代理协作文档）
+**版本**: v1.2（新增 Anthropic API 传输协议 + Claude Code 传输架构两篇底层协议文档）
