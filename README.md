@@ -22,10 +22,11 @@
 6. ✅ **Skills开发实战手册**
 7. ✅ **Anthropic API传输协议**
 8. ✅ **Claude Code传输架构**
+9. ✅ **Plugin Marketplace与分发**
 
 ---
 
-## 📖 文档列表（共13篇）
+## 📖 文档列表（共14篇）
 
 ---
 
@@ -343,6 +344,26 @@
 
 ---
 
+### 🏬 第六部分：Plugin Marketplace 与分发（1篇）
+
+#### 14. Claude Code Plugin Marketplaces 完整指南
+- **文件**: `14-claude-code-plugin-marketplaces-complete-guide.md` | 大小: ~16 KB
+- **来源**:
+  - [Discover and install prebuilt plugins through marketplaces](https://code.claude.com/docs/en/discover-plugins)
+  - [Create and distribute a plugin marketplace](https://code.claude.com/docs/en/plugin-marketplaces)
+  - [Plugins reference](https://code.claude.com/docs/en/plugins-reference)
+- **核心内容**:
+  - marketplace 与单个 plugin 的关系：先添加市场，再安装插件
+  - 官方 Anthropic marketplace、`/plugin install <name>@marketplace` 与提交通道
+  - 自建 marketplace 所需的 `.claude-plugin/marketplace.json`、目录结构与分发方式
+  - 支持的来源类型：GitHub / git URL / 远程 `marketplace.json` / 本地目录 / monorepo sparse checkout
+  - 作用域、自动更新、团队共享配置（`extraKnownMarketplaces`）
+  - 安装缓存机制、路径限制与常见故障排查
+- **适用读者**: 想让 Claude Code plugin 支持 marketplace 发现、安装与团队分发的工具链开发者
+- **关键要点**: 仅能 `--plugin-dir` 本地加载，不等于已经具备 marketplace 安装能力
+
+---
+
 ## 🔗 相关资源链接
 
 ### 官方文档源
@@ -378,6 +399,7 @@
 - **08-Skills-Complete-Guide**: 开发自定义技能（最强实操）
 - **10-Agent-Teams**: 多实例并行协调（实验性功能）
 - **11-Plugins**: 打包分发扩展给团队
+- **14-Plugin-Marketplaces**: 让 plugin 进入可发现、可安装、可更新的分发链路
 - **12-API-Transportation-Protocol**: Anthropic Messages API 与 SSE 流式传输底层协议
 - **13-Claude-Code-Transportation-Architecture**: Claude Code 完整传输架构与 MCP 协议集成
 - 评估路线图（文档03的第7-8步）
@@ -398,6 +420,7 @@
 | **Subagent** | 独立上下文窗口中的专业化AI助手，单会话内运行 | 文档09 |
 | **Agent Team** | 多个独立Claude Code实例协调工作，可互相通信 | 文档10 |
 | **Plugin** | 打包分发skills/agents/hooks/MCP的可安装扩展单元 | 文档11 |
+| **Plugin Marketplace** | Claude Code 用于发现、安装和分发多个 plugin 的目录与来源机制 | 文档14 |
 | **Context Engineering** | 管理推理期间最优token集合的策略 | 文档02 |
 | **Context Rot** | 上下文窗口增大时模型回忆能力下降 | 文档02 |
 | **Compaction** | 压缩对话内容以延续长期任务 | 文档02, 04, 09 |
@@ -449,5 +472,5 @@
 
 ---
 
-**最后更新**: 2026年4月8日
-**版本**: v1.2（新增 Anthropic API 传输协议 + Claude Code 传输架构两篇底层协议文档）
+**最后更新**: 2026年4月10日
+**版本**: v1.3（新增 Claude Code Plugin Marketplace 完整指南）
